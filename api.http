@@ -3,26 +3,29 @@
 
 ### GET /test
 
-GET {{host}}/lists/2
+GET {{host}}/tags
 
 ### POST /test
 
-POST {{host}}/lists
+POST {{host}}/cards
 Content-Type: application/json
 
 {
-    "name": "Doing"
+    "content": "Carte test",
+    "color": "#f0f",
+    "position": 1,
+    "list_id": 1
 }
 
 ###
 
-PATCH {{host}}/lists/2
+PATCH {{host}}/cards/3
 Content-Type: application/json
 
 {
-    "name": "Done"
+    "content": "Carte à supprimer"
 }
 
 ###
 
-DELETE {{host}}/lists/2
+DELETE {{host}}/cards/3
