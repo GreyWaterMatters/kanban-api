@@ -3,23 +3,26 @@
 
 ### GET /test
 
-GET {{host}}/test
+GET {{host}}/lists/2
 
 ### POST /test
 
-POST {{host}}/test
+POST {{host}}/lists
 Content-Type: application/json
 
 {
-    "promo": "Nemo",
-    "saison": 6,
-    "au_taquet": true
+    "name": "Doing"
 }
 
 ###
 
-PATCH {{host}}/test
+PATCH {{host}}/lists/2
+Content-Type: application/json
+
+{
+    "name": "Done"
+}
 
 ###
 
-DELETE {{host}}/test
+DELETE {{host}}/lists/2
