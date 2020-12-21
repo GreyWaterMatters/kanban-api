@@ -1,0 +1,25 @@
+@port={{$dotenv PORT}}
+@host=http://localhost:{{port}}
+
+### GET /test
+
+GET {{host}}/test
+
+### POST /test
+
+POST {{host}}/test
+Content-Type: application/json
+
+{
+    "promo": "Nemo",
+    "saison": 6,
+    "au_taquet": true
+}
+
+###
+
+PATCH {{host}}/test
+
+###
+
+DELETE {{host}}/test
