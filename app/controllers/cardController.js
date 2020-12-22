@@ -84,8 +84,13 @@ cardController = {
         try {
             const cards = await Card.findAll({
                 include: ["list", "tags"],
-                where: { "list_id": listId }
+                where: { list_id: listId }
             });
+            if (cards.length < 0) {
+                res.status(404).json(`Cannot find cards with list_id ${listId}`);
+                return;
+            }
+
             res.json(cards);
         } catch (error) {
             console.error(error);
