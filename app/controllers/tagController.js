@@ -6,8 +6,8 @@ tagController = {
             const tags = await Tag.findAll();
             res.json(tags);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -17,8 +17,8 @@ tagController = {
             const newTag = await Tag.create(body);
             res.json(newTag);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -26,23 +26,37 @@ tagController = {
         const tagId = parseInt(req.params.id, 10);
         try {
             const tag = await Tag.findByPk(tagId);
+            if (!tag) {
+                res.status(404).json(`Cannot find list with id ${tagId}`);
+                return;
+            }
             res.json(tag);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
     updateTag: async (req, res) => {
-        const { body } = req;
+        const { name, color } = req.body;
         const tagId = parseInt(req.params.id, 10);
         try {
-            const Tag = await Tag.findByPk(tagId);
-            await Tag.update(body);
+            const tag = await Tag.findByPk(tagId);
+            if (!tag) {
+                res.status(404).json(`Cannot find list with id ${tagId}`);
+                return;
+            }
+            if (name) {
+                tag.name = name;
+            }
+            if (color) {
+                tag.color = color;
+            }
+            await tag.save();
             res.json(tag);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -50,11 +64,15 @@ tagController = {
         const tagId = parseInt(req.params.id, 10);
         try {
             const tag = await Tag.findByPk(tagId);
-            await Tag.destroy();
+            if (!tag) {
+                res.status(404).json(`Cannot find list with id ${tagId}`);
+                return;
+            }
+            await tag.destroy();
             res.json({ status: "ok" });
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     }
 };

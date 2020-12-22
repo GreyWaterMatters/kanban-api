@@ -12,12 +12,17 @@ router.get('/lists/:id', listController.getOneList);
 router.patch('/lists/:id', listController.updateList);
 router.delete('/lists/:id', listController.deleteList);
 
+router.get('/lists/:id/cards', cardController.getAllCardsFromList);
+
 router.get('/cards', cardController.getAllCards);
 router.post('/cards', cardController.createCard);
 
 router.get('/cards/:id', cardController.getOneCard);
 router.patch('/cards/:id', cardController.updateCard);
 router.delete('/cards/:id', cardController.deleteCard);
+
+router.post('/cards/:id/tag', cardController.addTagToCard);
+router.delete('/cards/:id/tag/:tag_id', cardController.deleteTagFromCard);
 
 router.get('/tags', tagController.getAllTags);
 router.post('/tags', tagController.createTag);

@@ -6,8 +6,8 @@ listController = {
             const lists = await List.findAll();
             res.json(lists);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -17,8 +17,8 @@ listController = {
             const newList = await List.create(body);
             res.json(newList);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -26,23 +26,37 @@ listController = {
         const listId = parseInt(req.params.id, 10);
         try {
             const list = await List.findByPk(listId);
+            if (!list) {
+                res.status(404).json(`Cannot find list with id ${listId}`);
+                return;
+            }
             res.json(list);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
     updateList: async (req, res) => {
-        const { body } = req;
+        const { name, position } = req.body;
         const listId = parseInt(req.params.id, 10);
         try {
             const list = await List.findByPk(listId);
-            await list.update(body);
+            if (!list) {
+                res.status(404).json(`Cannot find list with id ${listId}`);
+                return;
+            }
+            if (name) {
+                list.name = name;
+            }
+            if (position) {
+                list.position = position;
+            }
+            await list.save();
             res.json(list);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -50,11 +64,15 @@ listController = {
         const listId = parseInt(req.params.id, 10);
         try {
             const list = await List.findByPk(listId);
+            if (!list) {
+                res.status(404).json(`Cannot find list with id ${listId}`);
+                return;
+            }
             await list.destroy();
             res.json({ status: "ok" });
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     }
 };

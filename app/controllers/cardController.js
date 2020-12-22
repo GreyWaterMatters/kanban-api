@@ -6,8 +6,8 @@ cardController = {
             const cards = await Card.findAll();
             res.json(cards);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -17,8 +17,8 @@ cardController = {
             const newcard = await Card.create(body);
             res.json(newcard);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -26,23 +26,40 @@ cardController = {
         const cardId = parseInt(req.params.id, 10);
         try {
             const card = await Card.findByPk(cardId);
+            if (!card) {
+                res.status(404).json(`Cannot find list with id ${cardId}`);
+                return;
+            }
             res.json(card);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
     updateCard: async (req, res) => {
-        const { body } = req;
+        const { content, color, position } = req.body;
         const cardId = parseInt(req.params.id, 10);
         try {
             const card = await Card.findByPk(cardId);
-            await card.update(body);
+            if (!card) {
+                res.status(404).json(`Cannot find list with id ${cardId}`);
+                return;
+            }
+            if (content) {
+                card.content = content;
+            }
+            if (color) {
+                card.color = color;
+            }
+            if (position) {
+                card.position = position;
+            }
+            await card.save();
             res.json(card);
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     },
 
@@ -50,11 +67,69 @@ cardController = {
         const cardId = parseInt(req.params.id, 10);
         try {
             const card = await Card.findByPk(cardId);
+            if (!card) {
+                res.status(404).json(`Cannot find list with id ${cardId}`);
+                return;
+            }
             await card.destroy();
             res.json({ status: "ok" });
         } catch (error) {
-            console.log(error);
-            res.status(500).send('Une erreur est survenue');
+            console.error(error);
+            res.status(500).json(error.toString());
+        }
+    },
+
+    getAllCardsFromList: async (req, res) => {
+        const listId = parseInt(req.params.id, 10);
+        try {
+            const cards = await Card.findAll({
+                include: ["list", "tags"],
+                where: { "list_id": listId }
+            });
+            res.json(cards);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json(error.toString());
+        }
+    },
+
+    addTagToCard: async (req, res) => {
+        const cardId = parseInt(req.params.id, 10);
+        const { tag_id } = req.body;
+        try {
+            const card = await Card.findByPk(cardId, {
+                include: ["tags"]
+            });
+            if (!card) {
+                res.status(404).json(`Cannot find list with id ${cardId}`);
+                return;
+            }
+            if (tag_id) {
+                card.addTag(tag_id);
+            }
+            res.json({ status: "ok" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json(error.toString());
+        }
+    },
+
+    deleteTagFromCard: async (req, res) => {
+        const cardId = parseInt(req.params.id, 10);
+        const tagId = parseInt(req.params.tag_id, 10);
+        try {
+            const card = await Card.findByPk(cardId, {
+                include: ["tags"]
+            });
+            if (!card) {
+                res.status(404).json(`Cannot find list with id ${cardId}`);
+                return;
+            }
+            card.removeTag(tagId);
+            res.json({ status: "ok" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json(error.toString());
         }
     }
 };

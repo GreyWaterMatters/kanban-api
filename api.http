@@ -1,24 +1,54 @@
 @port={{$dotenv PORT}}
 @host=http://localhost:{{port}}
 
-### GET /test
+## TEST LISTS
 
-GET {{host}}/tags
+### GET /lists
+GET {{host}}/lists
 
-### POST /test
+### GET /lists/:id
+GET {{host}}/lists/1
 
+### POST /lists
+POST {{host}}/lists
+Content-Type: application/json
+
+{
+    "name": "Liste test",
+    "position": 1
+}
+
+### PATCH /lists/:id
+PATCH {{host}}/lists/2
+Content-Type: application/json
+
+{
+    "name": "Liste à supprimer"
+}
+
+### DELETE /lists/:id
+DELETE {{host}}/lists/2
+
+## TEST CARDS
+
+### GET /cards
+GET {{host}}/cards
+
+### GET /cards/:id
+GET {{host}}/cards/1
+
+### POST /cards
 POST {{host}}/cards
 Content-Type: application/json
 
 {
-    "content": "Carte test",
+    "name": "Carte test",
     "color": "#f0f",
     "position": 1,
     "list_id": 1
 }
 
-###
-
+### PATCH /cards/:id
 PATCH {{host}}/cards/3
 Content-Type: application/json
 
@@ -26,6 +56,51 @@ Content-Type: application/json
     "content": "Carte à supprimer"
 }
 
-###
-
+### DELETE /cards/:id
 DELETE {{host}}/cards/3
+
+## TEST TAGS
+
+### GET /tags
+GET {{host}}/tags
+
+### GET /tags/:id
+GET {{host}}/tags/1
+
+### POST /tags
+POST {{host}}/tags
+Content-Type: application/json
+
+{
+    "name": "Tag test",
+    "color": "#f0f"
+}
+
+### PATCH /tags/:id
+PATCH {{host}}/tags/2
+Content-Type: application/json
+
+{
+    "content": "Tag à supprimer"
+}
+
+### DELETE /tags/:id
+DELETE {{host}}/tags/2
+
+## TEST ASSOCIATION CARDS / LISTS
+
+### GET /lists/:id/cards
+GET {{host}}/lists/1/cards
+
+## TEST ASSOCIATION TAGS / CARDS
+
+### POST /cards/:id/tag
+POST {{host}}/cards/2/tag
+Content-Type: application/json
+
+{
+    "tag_id": 1
+}
+
+### DELETE /cards/:card_id/tag/:tag_id
+DELETE {{host}}/cards/2/tag/1
