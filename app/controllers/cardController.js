@@ -3,7 +3,12 @@ const { Card } = require('../models');
 cardController = {
     getAllCards: async (req, res) => {
         try {
-            const cards = await Card.findAll();
+            const cards = await Card.findAll({
+                include: 'tags',
+                order: [
+                    ['position', 'ASC']
+                ]
+            });
             res.json(cards);
         } catch (error) {
             console.error(error);
@@ -12,10 +17,24 @@ cardController = {
     },
 
     createCard: async (req, res) => {
-        const { body } = req;
+        const { content, color, list_id } = req.body;
+        const bodyErrors = [];
         try {
-            const newcard = await Card.create(body);
-            res.json(newcard);
+            if (!content) {
+                bodyErrors.push(`content can not be empty`);
+            }
+            if (!list_id) {
+                bodyErrors.push(`list_id can not be empty`);
+            }
+            if (bodyErrors.length) {
+                return res.status(400).json(bodyErrors);
+            }
+            const newCard = await Card.build({ content, list_id });
+            if (color) {
+                newCard.color = color;
+            }
+            await newCard.save();
+            res.json(newCard);
         } catch (error) {
             console.error(error);
             res.status(500).json(error.toString());
@@ -25,10 +44,14 @@ cardController = {
     getOneCard: async (req, res) => {
         const cardId = parseInt(req.params.id, 10);
         try {
-            const card = await Card.findByPk(cardId);
+            const card = await Card.findByPk(cardId, {
+                include: 'tags',
+                order: [
+                    ['position', 'ASC']
+                ]
+            });
             if (!card) {
-                res.status(404).json(`Cannot find list with id ${cardId}`);
-                return;
+                return res.status(404).json(`Cannot find list with id ${cardId}`);
             }
             res.json(card);
         } catch (error) {
@@ -43,8 +66,7 @@ cardController = {
         try {
             const card = await Card.findByPk(cardId);
             if (!card) {
-                res.status(404).json(`Cannot find list with id ${cardId}`);
-                return;
+                return res.status(404).json(`Cannot find list with id ${cardId}`);
             }
             if (content) {
                 card.content = content;
@@ -68,8 +90,7 @@ cardController = {
         try {
             const card = await Card.findByPk(cardId);
             if (!card) {
-                res.status(404).json(`Cannot find list with id ${cardId}`);
-                return;
+                return res.status(404).json(`Cannot find list with id ${cardId}`);
             }
             await card.destroy();
             res.json({ status: "ok" });
@@ -87,51 +108,9 @@ cardController = {
                 where: { list_id: listId }
             });
             if (cards.length < 0) {
-                res.status(404).json(`Cannot find cards with list_id ${listId}`);
-                return;
+                return res.status(404).json(`Cannot find cards with list_id ${listId}`);
             }
-
             res.json(cards);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json(error.toString());
-        }
-    },
-
-    addTagToCard: async (req, res) => {
-        const cardId = parseInt(req.params.id, 10);
-        const { tag_id } = req.body;
-        try {
-            const card = await Card.findByPk(cardId, {
-                include: ["tags"]
-            });
-            if (!card) {
-                res.status(404).json(`Cannot find list with id ${cardId}`);
-                return;
-            }
-            if (tag_id) {
-                card.addTag(tag_id);
-            }
-            res.json({ status: "ok" });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json(error.toString());
-        }
-    },
-
-    deleteTagFromCard: async (req, res) => {
-        const cardId = parseInt(req.params.id, 10);
-        const tagId = parseInt(req.params.tag_id, 10);
-        try {
-            const card = await Card.findByPk(cardId, {
-                include: ["tags"]
-            });
-            if (!card) {
-                res.status(404).json(`Cannot find list with id ${cardId}`);
-                return;
-            }
-            card.removeTag(tagId);
-            res.json({ status: "ok" });
         } catch (error) {
             console.error(error);
             res.status(500).json(error.toString());

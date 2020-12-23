@@ -3,7 +3,16 @@ const { List } = require('../models');
 listController = {
     getAllLists: async (req, res) => {
         try {
-            const lists = await List.findAll();
+            const lists = await List.findAll({
+                include: {
+                    association: 'cards',
+                    include: 'tags'
+                },
+                order: [
+                    ['position', 'ASC'],
+                    ['cards', 'position', 'ASC']
+                ]
+            });
             res.json(lists);
         } catch (error) {
             console.error(error);
@@ -12,9 +21,21 @@ listController = {
     },
 
     createList: async (req, res) => {
-        const { body } = req;
+        const { name, position } = req.body;
+        const bodyErrors = [];
         try {
-            const newList = await List.create(body);
+            if (!name) {
+                bodyErrors.push('name can not be empty');
+            }
+            if (!position) {
+                bodyErrors.push('position can not be empty');
+            }
+            if (bodyErrors.length) {
+                return res.status(400).json(bodyErrors);
+            }
+
+            const newList = await List.build({ name, position });
+            await newList.save();
             res.json(newList);
         } catch (error) {
             console.error(error);
@@ -25,7 +46,16 @@ listController = {
     getOneList: async (req, res) => {
         const listId = parseInt(req.params.id, 10);
         try {
-            const list = await List.findByPk(listId);
+            const list = await List.findByPk(listId, {
+                include: {
+                    association: 'cards',
+                    include: 'tags'
+                },
+                order: [
+                    ['position', 'ASC'],
+                    ['cards', 'position', 'ASC']
+                ]
+            });
             if (!list) {
                 res.status(404).json(`Cannot find list with id ${listId}`);
                 return;
@@ -43,8 +73,7 @@ listController = {
         try {
             const list = await List.findByPk(listId);
             if (!list) {
-                res.status(404).json(`Cannot find list with id ${listId}`);
-                return;
+                return res.status(404).json(`Cannot find list with id ${listId}`);
             }
             if (name) {
                 list.name = name;
@@ -65,8 +94,7 @@ listController = {
         try {
             const list = await List.findByPk(listId);
             if (!list) {
-                res.status(404).json(`Cannot find list with id ${listId}`);
-                return;
+                return res.status(404).json(`Cannot find list with id ${listId}`);
             }
             await list.destroy();
             res.json({ status: "ok" });
