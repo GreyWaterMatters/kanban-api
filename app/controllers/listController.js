@@ -34,7 +34,7 @@ listController = {
                 return res.status(400).json(bodyErrors);
             }
 
-            const newList = await List.build({ name, position });
+            const newList = List.build({ name, position });
             await newList.save();
             res.json(newList);
         } catch (error) {

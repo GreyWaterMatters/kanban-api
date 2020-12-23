@@ -29,7 +29,7 @@ cardController = {
             if (bodyErrors.length) {
                 return res.status(400).json(bodyErrors);
             }
-            const newCard = await Card.build({ content, list_id });
+            const newCard = Card.build({ content, list_id });
             if (color) {
                 newCard.color = color;
             }

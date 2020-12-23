@@ -24,7 +24,7 @@ tagController = {
             if (bodyErrors.length) {
                 return res.status(400).json(bodyErrors);
             }
-            const newTag = await Tag.build({ name, color });
+            const newTag = Tag.build({ name, color });
             await newTag.save();
             res.json(newTag);
         } catch (error) {
