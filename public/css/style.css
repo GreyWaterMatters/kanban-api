@@ -1,0 +1,17 @@
+html {
+  overflow-x: auto;
+  background-color: #ccc;
+}
+
+body {
+  height: 100vh;
+}
+
+.input-color {
+  padding: 0;
+  width: 20px;
+}
+
+.card-lists {
+  overflow-x: auto;
+}

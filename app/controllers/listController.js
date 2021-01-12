@@ -27,14 +27,14 @@ listController = {
             if (!name) {
                 bodyErrors.push('name can not be empty');
             }
-            if (!position) {
-                bodyErrors.push('position can not be empty');
-            }
+            // if (!position) {
+            //     bodyErrors.push('position can not be empty');
+            // }
             if (bodyErrors.length) {
                 return res.status(400).json(bodyErrors);
             }
 
-            const newList = List.build({ name, position });
+            const newList = List.build({ name, position: position || 0 });
             await newList.save();
             res.json(newList);
         } catch (error) {

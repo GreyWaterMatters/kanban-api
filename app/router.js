@@ -21,8 +21,8 @@ router.get('/cards/:id', cardController.getOneCard);
 router.patch('/cards/:id', cardController.updateCard);
 router.delete('/cards/:id', cardController.deleteCard);
 
-router.post('/cards/:id/tag', tagController.addTagToCard);
-router.delete('/cards/:id/tag/:tag_id', tagController.deleteTagFromCard);
+router.post('/cards/:id/tags', tagController.addTagToCard);
+router.delete('/cards/:id/tags/:tag_id', tagController.deleteTagFromCard);
 
 router.get('/tags', tagController.getAllTags);
 router.post('/tags', tagController.createTag);
