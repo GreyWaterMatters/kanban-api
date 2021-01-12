@@ -94,13 +94,13 @@ GET {{host}}/lists/1/cards
 
 ## TEST ASSOCIATION TAGS / CARDS
 
-### POST /cards/:id/tag
-POST {{host}}/cards/2/tag
+### POST /cards/:id/tags
+POST {{host}}/cards/2/tags
 Content-Type: application/json
 
 {
     "tag_id": 1
 }
 
-### DELETE /cards/:card_id/tag/:tag_id
-DELETE {{host}}/cards/2/tag/1
+### DELETE /cards/:card_id/tags/:tag_id
+DELETE {{host}}/cards/2/tags/1
